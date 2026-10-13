@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPERACIÓN: CÓDIGO CERO - Ciber-Legislación</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background: #000;
+            color: #00ff41;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Efecto Matrix de fondo */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #00ff41;
+            background: rgba(0, 255, 65, 0.05);
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
+            letter-spacing: 3px;
+            animation: glitch 3s infinite;
+        }
+
+        .subtitle {
+            color: #00ccff;
+            margin-top: 10px;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            letter-spacing: 2px;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            92% { transform: translate(-2px, 2px); }
+            94% { transform: translate(2px, -2px); }
+            96% { transform: translate(-2px, -2px); }
+            98% { transform: translate(2px, 2px); }
+        }
+
+        /* Pantallas */
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Pantalla de inicio - Registro de equipos */
+        .team-registration {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .team-card {
+            background: rgba(0, 255, 65, 0.05);
+            border: 2px solid #00ff41;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff41, transparent);
+            animation: scan 3s infinite;
+        }
+
+        @keyframes scan {
+            to { left: 100%; }
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 65, 0.4);
+        }
+
+        .team-card.registered {
+            border-color: #00ccff;
+            background: rgba(0, 204, 255, 0.1);
+        }
+
+        .team-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .team-card h3 {
+            color: #00ff41;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        .team-card input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .team-card input:focus {
+            outline: none;
+            border-color: #00ccff;
+            box-shadow: 0 0 10px #00ccff;
+        }
+
+        .team-card input::placeholder {
+            color: rgba(0, 255, 65, 0.5);
+        }
+
+        .team-card.registered h3 {
+            color: #00ccff;
+        }
+
+        /* Botones */
+        .btn {
+            padding: 12px 30px;
+            background: transparent;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: #00ff41;
+            color: #000;
+            box-shadow: 0 0 20px #00ff41;
+        }
+
+        .btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #00ff41;
+            color: #000;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: transparent;
+            color: #00ff41;
+        }
+
+        .btn-danger {
+            border-color: #ff0055;
+            color: #ff0055;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #ff0055;
+            color: #000;
+            box-shadow: 0 0 20px #ff0055;
+        }
+
+        .btn-info {
+            border-color: #00ccff;
+            color: #00ccff;
+        }
+
+        .btn-info:hover:not(:disabled) {
+            background: #00ccff;
+            color: #000;
+            box-shadow: 0 0 20px #00ccff;
+        }
+
+        /* Vista de juego */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(0, 255, 65, 0.05);
+            border: 1px solid #00ff41;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .team-info h2 {
+            color: #00ccff;
+            font-size: 1.3rem;
+        }
+
+        .progress-container {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff41;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #00ccff);
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .step-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00ff41;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #00ff41;
+            transition: all 0.3s;
+        }
+
+        .step-dot.completed {
+            background: #00ff41;
+            color: #000;
+            box-shadow: 0 0 15px #00ff41;
+        }
+
+        .step-dot.current {
+            background: #00ccff;
+            color: #000;
+            border-color: #00ccff;
+            box-shadow: 0 0 15px #00ccff;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Pista / Desafío */
+        .challenge {
+            background: rgba(0, 255, 65, 0.05);
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #00ff41;
+        }
+
+        .challenge-number {
+            width: 50px;
+            height: 50px;
+            background: #00ff41;
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .challenge-title {
+            color: #00ccff;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+        }
+
+        .challenge-category {
+            color: #ff00ff;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
+
+        .narrative {
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 3px solid #ff00ff;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .question {
+            background: rgba(0, 204, 255, 0.1);
+            border: 1px solid #00ccff;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .question strong {
+            color: #00ccff;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #00ccff;
+            box-shadow: 0 0 15px #00ccff;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .feedback.success {
+            background: rgba(0, 255, 65, 0.2);
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            display: block;
+        }
+
+        .feedback.error {
+            background: rgba(255, 0, 85, 0.2);
+            border: 2px solid #ff0055;
+            color: #ff0055;
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .hint-box {
+            background: rgba(255, 255, 0, 0.1);
+            border: 1px dashed #ffff00;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .hint-box.visible {
+            display: block;
+        }
+
+        .hint-box strong {
+            color: #ffff00;
+        }
+
+        /* Panel del Profesor */
+        .teacher-panel {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .teacher-panel h2 {
+            color: #ff00ff;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+        }
+
+        .teams-progress {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .team-progress-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff41;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .team-progress-card h4 {
+            color: #00ccff;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+
+        .status-badge.active {
+            background: #00ff41;
+            color: #000;
+        }
+
+        .status-badge.waiting {
+            background: #ffff00;
+            color: #000;
+        }
+
+        .status-badge.finished {
+            background: #ff00ff;
+            color: #000;
+        }
+
+        .mini-progress {
+            height: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .mini-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #00ccff);
+            transition: width 0.5s;
+        }
+
+        .team-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        /* Pantalla de victoria */
+        .victory-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .victory-icon {
+            font-size: 5rem;
+            animation: victoryPulse 1s infinite;
+        }
+
+        @keyframes victoryPulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .victory-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: #00ff41;
+            text-shadow: 0 0 20px #00ff41;
+            margin: 20px 0;
+            letter-spacing: 5px;
+        }
+
+        .victory-message {
+            color: #00ccff;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .master-code {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #ff00ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+
+        .master-code h3 {
+            color: #ff00ff;
+            margin-bottom: 15px;
+        }
+
+        .code-display {
+            font-size: 2rem;
+            color: #00ff41;
+            letter-spacing: 5px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00ff41;
+        }
+
+        /* Modal de pistas */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #000;
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 0 50px rgba(0, 255, 65, 0.5);
+        }
+
+        .modal-content h3 {
+            color: #00ccff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .close-modal {
+            float: right;
+            background: none;
+            border: none;
+            color: #ff0055;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .game-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .challenge-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .progress-steps {
+                overflow-x: auto;
+                padding-bottom: 5px;
+            }
+
+            .step-dot {
+                flex-shrink: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            .challenge {
+                padding: 15px;
+            }
+
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+
+        /* Animación de terminal */
+        .terminal-text {
+            color: #00ff41;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #00ff41;
+            animation: typing 3s steps(40, end), blink 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            from, to { border-color: transparent; }
+            50% { border-color: #00ff41; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ OPERACIÓN: CÓDIGO CERO ⚡</h1>
+            <p class="subtitle">// UNIDAD III - LEGISLACIÓN INFORMÁTICA EN MÉXICO //</p>
+        </header>
+
+        <!-- PANTALLA 1: REGISTRO DE EQUIPOS -->
+        <div class="screen active" id="screen-register">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <p style="color: #00ccff; font-size: 1.1rem;">🔐 REGISTRO DE AGENTES DE CIBER-LEGISLACIÓN 🔐</p>
+                <p style="color: #aaa; margin-top: 10px;">Cada equipo debe registrarse con su nombre de clave</p>
+            </div>
+
+            <div class="team-registration">
+                <div class="team-card" data-team="1">
+                    <div class="team-icon">🔴</div>
+                    <h3>EQUIPO 1</h3>
+                    <input type="text" class="team-name-input" placeholder="Nombre de clave..." maxlength="20">
+                    <button class="btn btn-primary" onclick="registerTeam(1)">ACCEDER</button>
+                </div>
+                <div class="team-card" data-team="2">
+                    <div class="team-icon">🔵</div>
+                    <h3>EQUIPO 2</h3>
+                    <input type="text" class="team-name-input" placeholder="Nombre de clave..." maxlength="20">
+                    <button class="btn btn-primary" onclick="registerTeam(2)">ACCEDER</button>
+                </div>
+                <div class="team-card" data-team="3">
+                    <div class="team-icon">🟢</div>
+                    <h3>EQUIPO 3</h3>
+                    <input type="text" class="team-name-input" placeholder="Nombre de clave..." maxlength="20">
+                    <button class="btn btn-primary" onclick="registerTeam(3)">ACCEDER</button>
+                </div>
+                <div class="team-card" data-team="4">
+                    <div class="team-icon">🟡</div>
+                    <h3>EQUIPO 4</h3>
+                    <input type="text" class="team-name-input" placeholder="Nombre de clave..." maxlength="20">
+                    <button class="btn btn-primary" onclick="registerTeam(4)">ACCEDER</button>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-info" onclick="showTeacherPanel()">👁️ PANEL DEL PROFESOR</button>
+            </div>
+        </div>
+
+        <!-- PANTALLA 2: JUEGO POR EQUIPO -->
+        <div class="screen" id="screen-game">
+            <div class="game-header">
+                <div class="team-info">
+                    <span id="teamIcon" style="font-size: 2rem;">🔴</span>
+                    <h2 id="teamNameDisplay">EQUIPO</h2>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%;">0%</div>
+                    </div>
+                    <div class="progress-steps" id="progressSteps">
+                        <div class="step-dot current" data-step="1">1</div>
+                        <div class="step-dot" data-step="2">2</div>
+                        <div class="step-dot" data-step="3">3</div>
+                        <div class="step-dot" data-step="4">4</div>
+                        <div class="step-dot" data-step="5">5</div>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-danger" onclick="exitGame()">SALIR</button>
+                </div>
+            </div>
+
+            <div id="challengeContainer">
+                <!-- Las pistas se cargan dinámicamente -->
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-info" onclick="showHint()">💡 PEDIR PISTA (-1 punto)</button>
+            </div>
+        </div>
+
+        <!-- PANTALLA 3: VICTORIA -->
+        <div class="screen" id="screen-victory">
+            <div class="victory-screen">
+                <div class="victory-icon">🏆</div>
+                <h1 class="victory-title">¡ACCESO CONCEDIDO!</h1>
+                <p class="victory-message">
+                    Has descifrado el CÓDIGO CERO y salvado el sistema.<br>
+                    Bienvenido, Agente, a la Unidad III de Legislación Informática.
+                </p>
+                <div class="master-code">
+                    <h3>🔓 CLAVE MAESTRA DESBLOQUEADA</h3>
+                    <div class="code-display">9 - 1803 - 211 - 311 - 104</div>
+                </div>
+                <p style="color: #aaa; margin-top: 20px;">
+                    📚 Has investigado las leyes fundamentales del Ciber-Derecho Mexicano
+                </p>
+                <button class="btn btn-primary" onclick="exitGame()" style="margin-top: 20px;">VOLVER AL INICIO</button>
+            </div>
+        </div>
+
+        <!-- PANEL DEL PROFESOR (MODAL) -->
+        <div class="modal" id="teacherModal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="closeTeacherPanel()">&times;</button>
+                <h2 style="color: #ff00ff; text-align: center; margin-bottom: 20px;">👁️ PANEL DE CONTROL - PROFESOR 👁️</h2>
+                <div class="teams-progress" id="teamsProgress">
+                    <!-- Se llena dinámicamente -->
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-danger" onclick="resetAllTeams()">🔄 REINICIAR TODOS LOS EQUIPOS</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de los desafíos
+        const challenges = [
+            {
+                id: 1,
+                title: "EL FANTASMA DIGITAL",
+                category: "TEMA 3.1.2 - CIVIL / DATOS PERSONALES",
+                narrative: "Una App de moda filtró los datos de 1 millón de mexicanos. La empresa dice que 'no es su problema'. Tú debes encontrar el escudo legal que protege a los ciudadanos.",
+                question: "¿Cuál es el nombre exacto de la Ley Federal que protege los datos personales en posesión de particulares en México? <strong>Cuenta cuántas palabras tiene el nombre completo de esa ley.</strong>",
+                answer: "9",
+                hint: "Pista: Busca 'Ley Federal de Protección de Datos Personales en Posesión de los Particulares'. Cuenta cada palabra separada por espacios.",
+                explanation: "✅ ¡Correcto! La LFPDPPP tiene 9 palabras en su nombre completo. Esta es la ley que protege nuestros datos ante empresas privadas."
+            },
+            {
+                id: 2,
+                title: "EL CONTRATO FANTASMA",
+                category: "TEMA 3.2.1 - MERCANTIL / COMERCIO ELECTRÓNICO",
+                narrative: "Alguien compró 50 laptops por WhatsApp, pagó, y el vendedor desapareció. El vendedor alega: 'Eso no fue un contrato real, solo fue un chat'. Debes encontrar el artículo que lo desmiente.",
+                question: "Busca en el <strong>Código de Comercio</strong>. ¿Qué número de artículo establece que los contratos celebrados por medios electrónicos tienen la misma validez que los escritos en papel?",
+                answer: "1803",
+                hint: "Pista: Está en el Código de Comercio, en el libro sobre contratos mercantiles. El artículo está en el rango 1800-1810.",
+                explanation: "✅ ¡Correcto! El Art. 1803 del Código de Comercio valida los contratos electrónicos. WhatsApp, emails y chats SÍ son contratos válidos."
+            },
+            {
+                id: 3,
+                title: "EL HACKER DE CALIFICACIONES",
+                category: "TEMA 3.3.1 - PENAL / DELITOS INFORMÁTICOS",
+                narrative: "Un alumno modificó su calificación en el sistema de la escuela entrando sin permiso. La escuela quiere denunciarlo. Debes encontrar el artículo que castiga este delito.",
+                question: "En el <strong>Código Penal Federal</strong>, busca el capítulo de 'Delitos cometidos a través de medios electrónicos'. ¿Qué número de artículo castiga el 'Acceso ilícito a sistemas y equipos de informática'? <strong>(Escribe solo el número, sin el 'Bis')</strong>",
+                answer: "211",
+                hint: "Pista: Los delitos informáticos en el CPF están en el Artículo 211 Bis. El número base (sin el 'Bis') es lo que necesitas.",
+                explanation: "✅ ¡Correcto! El Art. 211 Bis del Código Penal Federal castiga el acceso ilícito a sistemas. El número base es 211."
+            },
+            {
+                id: 4,
+                title: "EL JEFE TÓXICO",
+                category: "TEMA 3.4 - LABORAL / TELETRABAJO",
+                narrative: "Una empresa obliga a sus empleados a trabajar desde casa, pero no les paga la parte proporcional de luz e internet, y los amenaza con despedirlos si no contestan mensajes a las 11 PM.",
+                question: "En la <strong>Ley Federal del Trabajo</strong>, ¿a partir de qué artículo se regula específicamente el 'Teletrabajo'?",
+                answer: "311",
+                hint: "Pista: El teletrabajo se agregó recientemente a la LFT. Los artículos están en el rango 311 al 313.",
+                explanation: "✅ ¡Correcto! El Art. 311 de la LFT define el teletrabajo. Los artículos 311-A, 311-B y 311-C establecen los derechos y obligaciones."
+            },
+            {
+                id: 5,
+                title: "EL PIRATA DE SOFTWARE",
+                category: "TEMA 3.5.3 - PROPIEDAD INTELECTUAL",
+                narrative: "Un joven descarga Windows pirata y lo vende en USB en la calle. Dice: 'El software no es un libro, así que no tiene derechos de autor'. Debes encontrar el artículo que lo contradice.",
+                question: "Según la <strong>Ley Federal del Derecho de Autor</strong>, los programas de computación SÍ están protegidos. ¿Qué número de artículo los menciona específicamente?",
+                answer: "104",
+                hint: "Pista: Está en la LFDA, en el capítulo sobre obras protegidas. El artículo está en el rango 100-110.",
+                explanation: "✅ ¡Correcto! El Art. 104 de la LFDA establece que los programas de computación son obras protegidas por derechos de autor."
+            }
+        ];
+
+        // Estado de los equipos
+        let teams = {
+            1: { name: '', icon: '🔴', currentStep: 1, completed: [], hints: 0, score: 0, active: false },
+            2: { name: '', icon: '🔵', currentStep: 1, completed: [], hints: 0, score: 0, active: false },
+            3: { name: '', icon: '🟢', currentStep: 1, completed: [], hints: 0, score: 0, active: false },
+            4: { name: '', icon: '🟡', currentStep: 1, completed: [], hints: 0, score: 0, active: false }
+        };
+
+        let currentTeamId = null;
+
+        // Cargar estado desde localStorage
+        function loadState() {
+            const saved = localStorage.getItem('codigoCeroTeams');
+            if (saved) {
+                teams = JSON.parse(saved);
+            }
+        }
+
+        // Guardar estado
+        function saveState() {
+            localStorage.setItem('codigoCeroTeams', JSON.stringify(teams));
+        }
+
+        // Registrar equipo
+        function registerTeam(teamId) {
+            const card = document.querySelector(`.team-card[data-team="${teamId}"]`);
+            const input = card.querySelector('.team-name-input');
+            const name = input.value.trim();
+
+            if (!name) {
+                alert('⚠️ Ingresa un nombre de clave para el equipo');
+                return;
+            }
+
+            teams[teamId].name = name;
+            teams[teamId].active = true;
+            currentTeamId = teamId;
+            saveState();
+
+            // Marcar como registrado
+            card.classList.add('registered');
+            input.disabled = true;
+            card.querySelector('button').textContent = '✓ REGISTRADO';
+            card.querySelector('button').disabled = true;
+
+            // Iniciar juego
+            setTimeout(() => startGame(teamId), 500);
+        }
+
+        // Iniciar juego para un equipo
+        function startGame(teamId) {
+            currentTeamId = teamId;
+            const team = teams[teamId];
+
+            document.getElementById('screen-register').classList.remove('active');
+            document.getElementById('screen-game').classList.add('active');
+
+            document.getElementById('teamIcon').textContent = team.icon;
+            document.getElementById('teamNameDisplay').textContent = team.name;
+
+            loadChallenge();
+            updateProgress();
+        }
+
+        // Cargar desafío actual
+        function loadChallenge() {
+            const team = teams[currentTeamId];
+            const challenge = challenges[team.currentStep - 1];
+            const container = document.getElementById('challengeContainer');
+
+            container.innerHTML = `
+                <div class="challenge">
+                    <div class="challenge-header">
+                        <div class="challenge-number">${challenge.id}</div>
+                        <div>
+                            <div class="challenge-title">${challenge.title}</div>
+                            <div class="challenge-category">${challenge.category}</div>
+                        </div>
+                    </div>
+                    <div class="narrative">"${challenge.narrative}"</div>
+                    <div class="question">${challenge.question}</div>
+                    <input type="text" class="answer-input" id="answerInput" placeholder="Escribe tu respuesta..." autocomplete="off">
+                    <div style="text-align: center;">
+                        <button class="btn btn-primary" onclick="checkAnswer()">🔓 DESCIFRAR CÓDIGO</button>
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="hint-box" id="hintBox">
+                        <strong>💡 PISTA:</strong> ${challenge.hint}
+                    </div>
+                </div>
+            `;
+
+            // Enter para enviar
+            document.getElementById('answerInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkAnswer();
+            });
+
+            document.getElementById('answerInput').focus();
+        }
+
+        // Verificar respuesta
+        function checkAnswer() {
+            const team = teams[currentTeamId];
+            const challenge = challenges[team.currentStep - 1];
+            const input = document.getElementById('answerInput');
+            const feedback = document.getElementById('feedback');
+            const userAnswer = input.value.trim();
+
+            if (!userAnswer) {
+                feedback.className = 'feedback error';
+                feedback.innerHTML = '⚠️ Debes escribir una respuesta';
+                return;
+            }
+
+            if (userAnswer === challenge.answer) {
+                // Respuesta correcta
+                feedback.className = 'feedback success';
+                feedback.innerHTML = `
+                    <strong>🎉 ¡CÓDIGO DESCIFRADO!</strong><br>
+                    ${challenge.explanation}<br>
+                    <strong>+10 puntos</strong>
+                `;
+
+                team.completed.push(challenge.id);
+                team.score += 10;
+                saveState();
+
+                // Avanzar al siguiente desafío
+                setTimeout(() => {
+                    if (team.currentStep < 5) {
+                        team.currentStep++;
+                        saveState();
+                        updateProgress();
+                        loadChallenge();
+                    } else {
+                        // ¡Victoria!
+                        showVictory();
+                    }
+                }, 2500);
+            } else {
+                // Respuesta incorrecta
+                feedback.className = 'feedback error';
+                feedback.innerHTML = `
+                    <strong>❌ CÓDIGO INCORRECTO</strong><br>
+                    El sistema rechaza tu respuesta. Investiga mejor en las fuentes oficiales.<br>
+                    <em style="font-size: 0.9rem;">Puedes pedir una pista con el botón de abajo (-1 punto)</em>
+                `;
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        // Mostrar pista
+        function showHint() {
+            const team = teams[currentTeamId];
+            const hintBox = document.getElementById('hintBox');
+            
+            if (hintBox.classList.contains('visible')) {
+                return; // Ya está visible
+            }
+
+            if (confirm('💡 Pedir una pista te costará 1 punto. ¿Deseas continuar?')) {
+                hintBox.classList.add('visible');
+                team.hints++;
+                team.score = Math.max(0, team.score - 1);
+                saveState();
+            }
+        }
+
+        // Actualizar progreso
+        function updateProgress() {
+            const team = teams[currentTeamId];
+            const progress = ((team.currentStep - 1) / 5) * 100;
+            
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressFill').textContent = Math.round(progress) + '%';
+
+            // Actualizar dots
+            document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                const step = index + 1;
+                dot.classList.remove('completed', 'current');
+                
+                if (team.completed.includes(step)) {
+                    dot.classList.add('completed');
+                } else if (step === team.currentStep) {
+                    dot.classList.add('current');
+                }
+            });
+        }
+
+        // Mostrar victoria
+        function showVictory() {
+            document.getElementById('screen-game').classList.remove('active');
+            document.getElementById('screen-victory').classList.add('active');
+            
+            const team = teams[currentTeamId];
+            team.completed.push('victory');
+            saveState();
+        }
+
+        // Salir del juego
+        function exitGame() {
+            if (currentTeamId) {
+                teams[currentTeamId].active = false;
+                saveState();
+            }
+            currentTeamId = null;
+            
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-register').classList.add('active');
+            
+            // Actualizar tarjetas de equipos
+            updateTeamCards();
+        }
+
+        // Actualizar tarjetas de equipos
+        function updateTeamCards() {
+            for (let i = 1; i <= 4; i++) {
+                const card = document.querySelector(`.team-card[data-team="${i}"]`);
+                const input = card.querySelector('.team-name-input');
+                const btn = card.querySelector('button');
+                const team = teams[i];
+
+                if (team.name) {
+                    card.classList.add('registered');
+                    input.value = team.name;
+                    input.disabled = true;
+                    btn.textContent = team.active ? '✓ EN JUEGO' : '✓ REGISTRADO';
+                    btn.disabled = true;
+                } else {
+                    card.classList.remove('registered');
+                    input.disabled = false;
+                    btn.textContent = 'ACCEDER';
+                    btn.disabled = false;
+                }
+            }
+        }
+
+        // Panel del profesor
+        function showTeacherPanel() {
+            const modal = document.getElementById('teacherModal');
+            const container = document.getElementById('teamsProgress');
+            
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= 4; i++) {
+                const team = teams[i];
+                const progress = (team.completed.filter(c => c !== 'victory').length / 5) * 100;
+                const isFinished = team.completed.includes('victory');
+                
+                let statusClass = 'waiting';
+                let statusText = 'ESPERANDO';
+                
+                if (isFinished) {
+                    statusClass = 'finished';
+                    statusText = 'COMPLETADO';
+                } else if (team.active) {
+                    statusClass = 'active';
+                    statusText = 'EN JUEGO';
+                }
+
+                container.innerHTML += `
+                    <div class="team-progress-card">
+                        <h4>
+                            <span>${team.icon} ${team.name || 'EQUIPO ' + i}</span>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </h4>
+                        <div class="mini-progress">
+                            <div class="mini-progress-fill" style="width: ${progress}%;"></div>
+                        </div>
+                        <div class="team-stats">
+                            <span>🎯 Pista: ${team.currentStep}/5</span>
+                            <span>⭐ Puntos: ${team.score}</span>
+                            <span>💡 Pistas: ${team.hints}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            modal.classList.add('active');
+        }
+
+        function closeTeacherPanel() {
+            document.getElementById('teacherModal').classList.remove('active');
+        }
+
+        // Reiniciar todos los equipos
+        function resetAllTeams() {
+            if (confirm('⚠️ ¿Seguro que deseas reiniciar el progreso de TODOS los equipos? Esta acción no se puede deshacer.')) {
+                for (let i = 1; i <= 4; i++) {
+                    teams[i] = { name: '', icon: teams[i].icon, currentStep: 1, completed: [], hints: 0, score: 0, active: false };
+                }
+                saveState();
+                closeTeacherPanel();
+                location.reload();
+            }
+        }
+
+        // Inicializar
+        loadState();
+        updateTeamCards();
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('teacherModal').addEventListener('click', (e) => {
+            if (e.target.id === 'teacherModal') closeTeacherPanel();
+        });
+    </script>
+</body>
+</html>
